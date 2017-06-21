@@ -17,6 +17,8 @@ For more information on Spring Cloud Data Flow and its capabilities, see it's [d
 To install the chart with the release name `my-release`:
 
 ```bash
+$ cd charts
+$ helm dep update incubator/spring-cloud-data-flow
 $ helm install --name my-release incubator/spring-cloud-data-flow
 ```
 
