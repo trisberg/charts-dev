@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}-server
+data:
+  application.yaml: |-
+    security:
+      basic:
+        enabled: true
+        realm: Spring Cloud Data Flow
+    spring:
+      cloud:
+        dataflow:
+          security:
+            authentication:
+              file:
+                enabled: true
+                users:
+                  admin: admin, ROLE_MANAGE, ROLE_VIEW
+                  user: password, ROLE_VIEW, ROLE_CREATE
+        deployer:
+          kubernetes:
+            environmentVariables: 'SPRING_RABBITMQ_HOST=${{ printf "{%s" .Release.Name | upper }}_RABBITMQ_SERVICE_HOST},SPRING_RABBITMQ_PORT=${{ printf "{%s" .Release.Name | upper }}_RABBITMQ_SERVICE_PORT_AMPQ},SPRING_RABBITMQ_USERNAME={{ .Values.rabbitmq.rabbitmqUsername }},SPRING_RABBITMQ_PASSWORD={{ .Values.rabbitmq.rabbitmqPassword }},SPRING_REDIS_HOST=${{ printf "{%s" .Release.Name | upper }}_REDIS_SERVICE_HOST},SPRING_REDIS_PORT=${{ printf "{%s" .Release.Name | upper }}_REDIS_SERVICE_PORT},SPRING_REDIS_PASSWORD={{ .Values.redis.redisPassword }}'
+      datasource:
+        url: 'jdbc:mariadb://{{- printf "%s-%s" .Release.Name "mariadb" | trunc 63 | trimSuffix "-" -}}:3306/{{ .Values.mariadb.mariadbDatabase }}'
+        driverClassName: org.mariadb.jdbc.Driver
+        username: {{ .Values.mariadb.mariadbUser }}
+        password: ${mariadb-password}
+        testOnBorrow: true
+        validationQuery: "SELECT 1"
+      redis:
+        host: ${{ printf "{%s" .Release.Name | upper }}_REDIS_SERVICE_HOST}
+        port: ${{ printf "{%s" .Release.Name | upper }}_REDIS_SERVICE_PORT}
+        password: {{ .Values.redis.redisPassword }}

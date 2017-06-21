@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ template "fullname" . }}-server
+  labels:
+    spring-cloud-service: 'spring-cloud-data-flow-server'
+spec:
+  # If you are running k8s on a local dev box, you can use type NodePort instead
+  type: LoadBalancer
+  ports:
+    - port: 80
+  selector:
+    name: {{ template "fullname" . }}-server
