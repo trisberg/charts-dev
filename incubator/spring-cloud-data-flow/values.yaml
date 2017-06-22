@@ -1,5 +1,7 @@
 server:
   version: 1.2.0.RELEASE
+metrics:
+  version: 1.0.0.M1
 mariadb:
   mariadbUser: spring
   mariadbPassword: spr1ng

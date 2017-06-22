@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}-metrics
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: {{ template "fullname" . }}-metrics
+    spec:
+      containers:
+      - name: {{ template "fullname" . }}-metrics
+        image: springcloudstream/metrics-collector-rabbit:{{ .Values.metrics.version }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 1.0
+            memory: 2048Mi
+          requests:
+            cpu: 0.5
+            memory: 1024Mi
+        env:
+        - name: SERVER_PORT
+          value: '80'
+        - name: SECURITY_BASIC_ENABLED
+          value: 'false'
+        - name: SPRING_RABBITMQ_HOST
+          value: '${{ printf "{%s" .Release.Name | upper }}_RABBITMQ_SERVICE_HOST}'
+        - name: SPRING_RABBITMQ_PORT
+          value: '${{ printf "{%s" .Release.Name | upper }}_RABBITMQ_SERVICE_PORT_AMPQ}'
+        - name: SPRING_RABBITMQ_USERNAME
+          value: '{{ .Values.rabbitmq.rabbitmqUsername }}'
+        - name: SPRING_RABBITMQ_PASSWORD
+          value: '{{ .Values.rabbitmq.rabbitmqPassword }}'
