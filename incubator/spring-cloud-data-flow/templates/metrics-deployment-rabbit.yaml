@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: {{ template "fullname" . }}-metrics
-        image: springcloudstream/metrics-collector-rabbit:{{ .Values.metrics.version }}
+        image: springcloud/metrics-collector-rabbit:{{ .Values.metrics.version }}
         imagePullPolicy: Always
         ports:
         - containerPort: 80
