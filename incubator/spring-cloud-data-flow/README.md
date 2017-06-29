@@ -8,7 +8,7 @@ Pipelines consist of [Spring Boot](http://projects.spring.io/spring-boot/) apps,
 This chart will provision a fully functional and fully featured Spring Cloud Data Flow installation 
 that can deploy and manage data processing pipelines in the cluster that it is deployed to. 
 
-MariaDB and Redis are used as the stores for Spring Cloud Data Flow state and RabbitMQ is used for the pipelines' messaging layer.
+MySQL and Redis are used as the stores for Spring Cloud Data Flow state and RabbitMQ is used for the pipelines' messaging layer.
 
 For more information on Spring Cloud Data Flow and its capabilities, see it's [documentation](http://docs.spring.io/spring-cloud-dataflow/docs/current/reference/htmlsingle/).
 

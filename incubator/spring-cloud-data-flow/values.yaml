@@ -8,12 +8,7 @@ server:
   version: 1.2.0.RELEASE
 metrics:
   version: 1.0.0.RELEASE
-mariadb:
-  mariadbUser: spring
-  mariadbPassword: spr1ng
-  mariadbDatabase: dataflow
 rabbitmq:
-  rabbitmqUsername: spring
-  rabbitmqPassword: spr1ng
-redis:
-  redisPassword: spr1ng
+  rabbitmqUsername: user
+mysql:
+  mysqlDatabase: dataflow

@@ -1,6 +1,6 @@
 dependencies:
-- name:  mariadb
-  version: 0.6.3
+- name:  mysql
+  version: 0.2.6
   repository: https://kubernetes-charts.storage.googleapis.com/
 - name:  redis
   version: 0.7.0

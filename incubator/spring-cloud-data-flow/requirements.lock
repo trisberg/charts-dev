@@ -2,10 +2,10 @@ dependencies:
 - condition: ""
   enabled: false
   import-values: null
-  name: mariadb
+  name: mysql
   repository: https://kubernetes-charts.storage.googleapis.com/
   tags: null
-  version: 0.6.3
+  version: 0.2.6
 - condition: ""
   enabled: false
   import-values: null
@@ -20,5 +20,5 @@ dependencies:
   repository: https://kubernetes-charts.storage.googleapis.com/
   tags: null
   version: 0.5.3
-digest: sha256:e43c90f5b46a99b71e3cc46ad1a871567931229194fbae624ea83a90aa93f7e4
-generated: 2017-06-21T12:40:37.473490506-04:00
+digest: sha256:49551c5220854587689ffacf8ff53167aec2dd302593d163dcea2f6eb412b5a5
+generated: 2017-06-29T16:00:04.215763482-04:00
