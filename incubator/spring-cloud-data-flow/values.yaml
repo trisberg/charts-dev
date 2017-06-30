@@ -5,7 +5,7 @@ dataflowAdminUsername: admin
 dataflowAdminPassword: admin
 dataflowAdminRoles: ROLE_MANAGE, ROLE_VIEW
 server:
-  version: 1.2.0.RELEASE
+  version: 1.2.1.RELEASE
 metrics:
   version: 1.0.0.RELEASE
 rabbitmq:
