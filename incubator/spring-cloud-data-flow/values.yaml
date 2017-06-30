@@ -1,9 +1,9 @@
-dataFlowUsername: user
-dataFlowPassword: password
-dataFlowRoles: ROLE_VIEW, ROLE_CREATE
-adminUsername: admin
-adminPassword: admin
-adminRoles: ROLE_MANAGE, ROLE_VIEW
+dataflowUsername: user
+dataflowPassword: password
+dataflowRoles: ROLE_VIEW, ROLE_CREATE
+dataflowAdminUsername: admin
+dataflowAdminPassword: admin
+dataflowAdminRoles: ROLE_MANAGE, ROLE_VIEW
 server:
   version: 1.2.0.RELEASE
 metrics:
