@@ -44,6 +44,24 @@ spec:
           requests:
             cpu: 0.5
             memory: 1024Mi
+        livenessProbe:
+          httpGet:
+            path: /management/health
+            port: 80
+            httpHeaders:
+            - name: Authorization
+              value: 'Basic {{ printf "%s:%s" .Values.dataflowAdminUsername .Values.dataflowAdminPassword | b64enc }}'
+          initialDelaySeconds: 120
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /management/health
+            port: 80
+            httpHeaders:
+            - name: Authorization
+              value: 'Basic {{ printf "%s:%s" .Values.dataflowAdminUsername .Values.dataflowAdminPassword | b64enc }}'
+          initialDelaySeconds: 30
+          timeoutSeconds: 10
         env:
         - name: KUBERNETES_NAMESPACE
           valueFrom:
