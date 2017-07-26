@@ -1,9 +1,9 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{ template "fullname" . }}-metrics
+  name: {{ template "shortname" . }}-metrics
   labels:
-    app: {{ template "fullname" . }}
+    app: {{ template "shortname" . }}-server
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
@@ -12,31 +12,31 @@ spec:
   template:
     metadata:
       labels:
-        name: {{ template "fullname" . }}-metrics
+        name: {{ template "shortname" . }}-metrics
     spec:
       containers:
-      - name: {{ template "fullname" . }}-metrics
-        image: springcloud/metrics-collector-rabbit:{{ .Values.metrics.version }}
-        imagePullPolicy: Always
+      - name: {{ template "shortname" . }}-metrics
+        image: {{ .Values.metrics.image }}:{{ .Values.metrics.version }}
+        imagePullPolicy: {{ .Values.metrics.imagePullPolicy }}
         ports:
-        - containerPort: 80
+        - containerPort: {{ .Values.metrics.service.internalPort }}
         resources:
           limits:
-            cpu: 1.0
-            memory: 2048Mi
+            cpu: {{ .Values.metrics.resources.limits.cpu }}
+            memory: {{ .Values.metrics.resources.limits.memory }}
           requests:
-            cpu: 0.5
-            memory: 1024Mi
+            cpu: {{ .Values.metrics.resources.requests.cpu }}
+            memory: {{ .Values.metrics.resources.requests.cpu }}
         livenessProbe:
           httpGet:
             path: /health
-            port: 80
+            port: {{ .Values.metrics.service.internalPort }}
           initialDelaySeconds: 60
           timeoutSeconds: 10
         readinessProbe:
           httpGet:
             path: /health
-            port: 80
+            port: {{ .Values.metrics.service.internalPort }}
           initialDelaySeconds: 30
           timeoutSeconds: 10
         env:

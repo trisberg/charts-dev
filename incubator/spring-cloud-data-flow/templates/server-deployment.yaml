@@ -1,9 +1,9 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: {{ template "fullname" . }}-server
+  name: {{ template "shortname" . }}-server
   labels:
-    app: {{ template "fullname" . }}
+    app: {{ template "shortname" . }}-server
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
@@ -12,12 +12,12 @@ spec:
   template:
     metadata:
       labels:
-        name: {{ template "fullname" . }}-server
+        name: {{ template "shortname" . }}-server
     spec:
       containers:
-      - name: {{ template "fullname" . }}-server
-        image: springcloud/spring-cloud-dataflow-server-kubernetes:{{ .Values.server.version }}
-        imagePullPolicy: Always
+      - name: {{ template "shortname" . }}-server
+        image: {{ .Values.server.image }}:{{ .Values.server.version }}
+        imagePullPolicy: {{ .Values.server.imagePullPolicy }}
         volumeMounts: [
           {
             name: rabbitmq,
@@ -36,55 +36,61 @@ spec:
           }
         ]
         ports:
-        - containerPort: 80
+        - containerPort: {{ .Values.server.service.internalPort }}
         resources:
           limits:
-            cpu: 1.0
-            memory: 2048Mi
+            cpu: {{ .Values.server.resources.limits.cpu }}
+            memory: {{ .Values.server.resources.limits.memory }}
           requests:
-            cpu: 0.5
-            memory: 1024Mi
+            cpu: {{ .Values.server.resources.requests.cpu }}
+            memory: {{ .Values.server.resources.requests.cpu }}
         livenessProbe:
           httpGet:
             path: /management/health
-            port: 80
+            port: {{ .Values.server.service.internalPort }}
             httpHeaders:
             - name: Authorization
               value: 'Basic {{ printf "%s:%s" .Values.dataflowAdminUsername .Values.dataflowAdminPassword | b64enc }}'
           initialDelaySeconds: 120
-          timeoutSeconds: 10
+          periodSeconds: 15
+          timeoutSeconds: 5
         readinessProbe:
           httpGet:
             path: /management/health
-            port: 80
+            port: {{ .Values.server.service.internalPort }}
             httpHeaders:
             - name: Authorization
               value: 'Basic {{ printf "%s:%s" .Values.dataflowAdminUsername .Values.dataflowAdminPassword | b64enc }}'
-          initialDelaySeconds: 30
-          timeoutSeconds: 10
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          timeoutSeconds: 5
         env:
         - name: KUBERNETES_NAMESPACE
           valueFrom:
             fieldRef:
               fieldPath: "metadata.namespace"
         - name: SERVER_PORT
-          value: '80'
-        - name: SPRING_CLOUD_CONFIG_SERVER_BOOTSTRAP
+          value: '{{ .Values.server.service.internalPort }}'
+        - name: SPRING_CLOUD_CONFIG_ENABLED
           value: 'false'
         - name: SPRING_CLOUD_DATAFLOW_FEATURES_ANALYTICS_ENABLED
           value: 'true'
         - name: SPRING_CLOUD_DEPLOYER_KUBERNETES_MEMORY
           value: 640Mi
+        - name: SPRING_CLOUD_DEPLOYER_KUBERNETES_READINESS_PROBE_DELAY
+          value: '{{ .Values.deployer.readinessProbe.initialDelaySeconds }}'
+        - name: SPRING_CLOUD_DEPLOYER_KUBERNETES_LIVENESS_PROBE_DELAY
+          value: '{{ .Values.deployer.livenessProbe.initialDelaySeconds }}'
         - name: SPRING_CLOUD_KUBERNETES_CONFIG_NAME
-          value: {{ template "fullname" . }}-server
+          value: {{ template "shortname" . }}-server
         - name: SPRING_CLOUD_KUBERNETES_SECRETS_ENABLE_API
           value: 'true'
         - name: SPRING_CLOUD_KUBERNETES_SECRETS_PATHS
           value: /etc/secrets
         - name: SPRING_CLOUD_DATAFLOW_METRICS_COLLECTOR_URI
-          value: 'http://${{ printf "{%s" .Release.Name | upper }}_SPRING_CLOUD_DATA_FLOW_METRICS_SERVICE_HOST}'
+          value: 'http://${{ printf "{" }}{{ template "envname" . }}_METRICS_SERVICE_HOST}'
         - name: SPRING_CLOUD_DATAFLOW_SERVER_URI
-          value: 'http://${{ printf "{%s" .Release.Name | upper }}_SPRING_CLOUD_DATA_FLOW_SERVER_SERVICE_HOST}:${{ printf "{%s" .Release.Name | upper }}_SPRING_CLOUD_DATA_FLOW_SERVER_SERVICE_PORT}'
+          value: 'http://${{ printf "{" }}{{ template "envname" . }}_SERVER_SERVICE_HOST}:${{ printf "{" }}{{ template "envname" . }}_SERVER_SERVICE_PORT}'
           # Maven repo for metadata artifact resolution plus metrics destination for all stream apps
         - name: SPRING_APPLICATION_JSON
           value: "{ \"maven\": { \"local-repository\": null, \"remote-repositories\": { \"repo1\": { \"url\": \"https://repo.spring.io/libs-snapshot\"} } }, \"spring.cloud.dataflow.application-properties.stream.spring.cloud.stream.bindings.applicationMetrics.destination\": \"metrics\" }"
