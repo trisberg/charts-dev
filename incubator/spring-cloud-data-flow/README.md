@@ -21,10 +21,18 @@ Assumes that serviceAccount credentials are available so the deployed Data Flow 
 To install the chart with the release name `my-release`:
 
 ```bash
-$ cd charts
-$ helm dep update incubator/spring-cloud-data-flow
-$ helm install --name my-release incubator/spring-cloud-data-flow
+$ helm repo add spring-incubator http://spring-incubator.cfapps.io
+$ helm repo update
+$ helm install --name my-release spring-incubator/spring-cloud-data-flow
 ```
+
+If you are using a cluster that does not have a load balancer (like Minikube) then you can install using a NodePort:
+
+```bash
+$ helm repo add spring-incubator http://spring-incubator.cfapps.io
+$ helm repo update
+$ helm install --name my-release --set server.service.type=NodePort spring-incubator/spring-cloud-data-flow
+````
 
 Note that this chart pulls in many different Docker images so can take a while to fully install. 
 
@@ -47,7 +55,7 @@ The following tables lists the configurable parameters and their default values.
 
 | Parameter                         | Description                                        | Default          |
 | --------------------------------- | -------------------------------------------------- | ---------------- |
-| server.version                    | The version/tag of the Data Flow server            | 1.2.1.RELEASE
+| server.version                    | The version/tag of the Data Flow server            | 1.2.2.RELEASE
 | server.imagePullPolicy            | The imagePullPolicy of the Data Flow server        | IfNotPresent
 | server.service.type               | The service type for the Data Flow server          | LoadBalancer
 | server.service.externalPort       | The external port for the Data Flow server         | 80

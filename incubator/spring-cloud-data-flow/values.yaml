@@ -9,7 +9,7 @@ dataflowAdminPassword: admin
 dataflowAdminRoles: ROLE_MANAGE, ROLE_VIEW
 server:
   image: springcloud/spring-cloud-dataflow-server-kubernetes
-  version: 1.2.1.RELEASE
+  version: 1.2.2.RELEASE
   imagePullPolicy: IfNotPresent
   service:
     type: LoadBalancer
